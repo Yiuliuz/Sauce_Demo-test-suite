@@ -1,0 +1,78 @@
+# .github/workflows/ci.yml
+# GitHub Actions CI workflow for the Sauce Demo test suite.
+#
+# Automatically runs pytest on every push to main and on every pull request.
+
+name: CI — Reqres API Test Suite
+
+on:
+  push:
+    branches: [main]          # Runs on direct pushes to main
+  pull_request:
+    branches: [main]          # Runs on any PR targeting main
+  workflow_dispatch:          # Allows manual execution from the GitHub UI
+
+jobs:
+  test:
+    name: Pytest (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest    # Clean Linux VM for each run
+
+    # Matrix strategy: runs the job once for each Python version.
+    # This helps validate compatibility across multiple environments.
+    strategy:
+      fail-fast: false        # If Python 3.11 fails, 3.12 will still run
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      # 1. Check out the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install the Python version defined in the matrix
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # 3. Cache pip dependencies.
+      # The key includes the hash of requirements.txt.
+      # If the file has not changed, installation becomes much faster.
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # 4. Install project dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+
+      # 5. Execute the smoke test suite.
+      # Secrets are exposed as environment variables.
+      # Test execution reports are generated in HTML and JUnit XML formats.
+      - name: Run smoke tests
+        env:
+          SAUCE_STANDARD_USER: ${{ secrets.SAUCE_STANDARD_USER }}
+          SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
+        run: |
+          pytest \
+            -v \
+            -m "smoke and not negative" \
+            --html=reports/report.html \
+            --self-contained-html \
+            --junitxml=reports/junit.xml
+
+      # 6. Upload reports as GitHub actions artifacts.
+      # Reports are always generated, even if suite fails before start.
+      # Each matrix job stores its own reports for the corresponding Python version.
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with: 
+          name: test-reports-py${{ matrix.python-version }}
+          path: reports/
+

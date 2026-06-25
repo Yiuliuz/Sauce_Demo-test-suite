@@ -50,9 +50,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 5. Install playwright dependencies.
+      # 5. Install playwright browser and os dependencies.
       - name: Install playwright
-        run: playwright install
+        run: playwright install --with-deps
       
 
       # 6. Execute the smoke test suite.

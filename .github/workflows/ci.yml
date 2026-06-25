@@ -60,7 +60,7 @@ jobs:
       # Test execution reports are generated in HTML and JUnit XML formats.
       - name: Run smoke tests
         env:
-          SAUCE_STANDARD_USER: ${{ secrets.SAUCE_STANDARD_USER }}
+          SAUCE_STANDARD_USER: ${{ secrets.SAUCE_STANDARD_USERNAME }}
           SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
         run: |
           pytest \

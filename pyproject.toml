@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v -ra"
+markers = [
+    "smoke: critical and fast tests",
+    "regression: regression tests",
+    "negative: Error handling scenarios",
+    "known_issue: tests affected by known API limitations",
+]

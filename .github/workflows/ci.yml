@@ -49,9 +49,13 @@ jobs:
       # 4. Install project dependencies
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      # 5. Install playwright dependencies.
+      - name: Install playwright
+        run: playwright install
       
 
-      # 5. Execute the smoke test suite.
+      # 6. Execute the smoke test suite.
       # Secrets are exposed as environment variables.
       # Test execution reports are generated in HTML and JUnit XML formats.
       - name: Run smoke tests
@@ -66,7 +70,7 @@ jobs:
             --self-contained-html \
             --junitxml=reports/junit.xml
 
-      # 6. Upload reports as GitHub actions artifacts.
+      # 7. Upload reports as GitHub actions artifacts.
       # Reports are always generated, even if suite fails before start.
       # Each matrix job stores its own reports for the corresponding Python version.
       - name: Upload test reports

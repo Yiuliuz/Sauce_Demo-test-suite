@@ -52,6 +52,14 @@ The purpose of this project is to demonstrate:
 * Input field validation
 * Error handling verification
 
+### Inventory
+
+* Products displayed
+* Basic elements interact
+* Sort products
+* Redirection to external links
+* Logout
+
 ---
 
 ## Test Categorization
@@ -62,6 +70,7 @@ Current markers include:
 
 * `smoke` → Critical happy-path scenarios
 * `negative` → Negative and error-handling scenarios
+* `known_issue` and `xfail` → Known errors and correct report.
 
 Examples:
 
@@ -243,7 +252,7 @@ This project includes a GitHub Actions workflow that automatically:
 The CI pipeline executes:
 
 ```bash
-pytest -v -m "smoke and not negative"
+pytest -v -m "(smoke or known_issue) and not negative"
 ```
 
 This approach ensures that:
@@ -251,6 +260,7 @@ This approach ensures that:
 * Critical user journeys are continuously validated
 * Fast feedback is provided on every execution
 * Negative scenarios remain available for dedicated validation runs
+* Run known failed cases and expects to be fixed
 
 ### Artifacts
 
@@ -309,4 +319,4 @@ The pipeline executes only smoke scenarios by default to provide fast and reliab
 * Trace collection
 * Additional functional coverage
 * Test data management
-* Cart, Products and Checkout tests coverague
+* Cart and Checkout tests coverague

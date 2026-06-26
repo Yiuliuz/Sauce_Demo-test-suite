@@ -65,7 +65,7 @@ jobs:
         run: |
           pytest \
             -v \
-            -m "smoke and not negative" \
+            -m "(smoke or known_issue) and not negative" \
             --html=reports/report.html \
             --self-contained-html \
             --junitxml=reports/junit.xml
